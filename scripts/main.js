@@ -64,7 +64,8 @@ let helpAboutDialog = $(helpAboutHtml).dialog(
   {
     effect: "drop",
     duration: 500
-  }
+  },
+  closeOnEscape: false
 });
 
 // Reading JSON data for network graph
