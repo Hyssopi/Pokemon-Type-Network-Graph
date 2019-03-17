@@ -234,29 +234,41 @@ function drawGraph(graphHtmlContainerId, graphData)
       // Crisp edges when zooming in images
       ctx.imageSmoothingEnabled = false;
       
+      let scaledWidth = 1;
+      let scaledHeight = 1;
+      
       if (node.group === 'TYPE')
       {
-        let scaledWidth = node.image.naturalWidth * GROUP_TYPE_IMAGE_SCALE_AMOUNT;
-        let scaledHeight = node.image.naturalHeight * GROUP_TYPE_IMAGE_SCALE_AMOUNT;
-        ctx.drawImage(node.image, node.x - scaledWidth / 2, node.y - scaledHeight / 2, scaledWidth, scaledHeight);
+        scaledWidth = node.image.naturalWidth * GROUP_TYPE_IMAGE_SCALE_AMOUNT;
+        scaledHeight = node.image.naturalHeight * GROUP_TYPE_IMAGE_SCALE_AMOUNT;
       }
       else if (node.group === 'POKEMON')
       {
-        let scaledWidth = node.image.naturalWidth * GROUP_POKEMON_IMAGE_SCALE_AMOUNT;
-        let scaledHeight = node.image.naturalHeight * GROUP_POKEMON_IMAGE_SCALE_AMOUNT;
-        
-        // Draw a highlight circle for highlighted Pokemon nodes
-        if (highlightNodes.indexOf(node) !== -1)
-        {
-          ctx.beginPath();
-          ctx.arc(node.x, node.y, Math.max(scaledWidth, scaledHeight) / 2, 0, 2 * Math.PI, false);
-          ctx.arc(node.x, node.y, Math.max(scaledWidth, scaledHeight) / 2 * 0.95, 0, 2 * Math.PI, true);
-          ctx.fillStyle = node.color;
-          ctx.fill();
-        }
-        
-        ctx.drawImage(node.image, node.x - scaledWidth / 2, node.y - scaledHeight / 2, scaledWidth, scaledHeight);
+        scaledWidth = node.image.naturalWidth * GROUP_POKEMON_IMAGE_SCALE_AMOUNT;
+        scaledHeight = node.image.naturalHeight * GROUP_POKEMON_IMAGE_SCALE_AMOUNT;
       }
+      
+      // Slightly increase image size for highlighted nodes
+      if (highlightNodes.indexOf(node) !== -1)
+      {
+        scaledWidth *= 1.1;
+        scaledHeight *= 1.1;
+      }
+      
+      ctx.save();
+      // Set node images to full opacity if it is to be highlighted or if the highlight node list is empty.
+      // Otherwise set the node images to be partially transparent. This is to help reduce clutter and increase visibility for the highlighted nodes.
+      if ((highlightNodes.indexOf(node) !== -1) || (highlightNodes.length === 0))
+      {
+        ctx.globalAlpha = 1.0;
+      }
+      else
+      {
+        ctx.globalAlpha = 0.3;
+      }
+      
+      ctx.drawImage(node.image, node.x - scaledWidth / 2, node.y - scaledHeight / 2, scaledWidth, scaledHeight);
+      ctx.restore();
       
       if (node.name)
       {
@@ -289,8 +301,21 @@ function drawGraph(graphHtmlContainerId, graphData)
       ctx.moveTo(link.source.x, link.source.y);
       ctx.lineTo(link.target.x, link.target.y);
       
-      ctx.lineWidth = (highlightLinks.indexOf(link) === -1) ? 1 / globalScale : 5 / globalScale;
+      ctx.lineWidth = (highlightLinks.indexOf(link) === -1) ? 1 / globalScale : 4 / globalScale;
+      
+      ctx.save();
+      // Set links to be partially transparent if not selected to be highlighted and with a non-empty highlight link list.
+      if ((highlightLinks.indexOf(link) !== -1) || (highlightLinks.length === 0))
+      {
+        ctx.globalAlpha = 1.0;
+      }
+      else
+      {
+        ctx.globalAlpha = 0.3;
+      }
+      
       ctx.stroke();
+      ctx.restore();
     })
     .dagLevelDistance(200)
     .zoom(1, 1000)
