@@ -1,0 +1,38 @@
+
+th, td
+{
+  padding: 0px;
+}
+
+th
+{
+  font-size: 14px;
+}
+
+.cellBorder
+{
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  margin: 10px;
+}
+
+.removeCloseButton .ui-dialog-titlebar-close
+{
+  display: none;
+}
+
+.ui-dialog-title
+{
+  font-size: 24px;
+  text-align: center;
+}
+
+.ui-dialog-titlebar
+{
+  background-color: rgba(220, 220, 220, 1.0);
+}
+
+.ui-widget.ui-widget-content
+{
+  background-color: rgba(235, 235, 235, 0.95);
+}
