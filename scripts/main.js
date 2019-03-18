@@ -317,7 +317,7 @@ function drawGraph(graphHtmlContainerId, graphData)
       ctx.stroke();
       ctx.restore();
     })
-    .dagLevelDistance(200)
+    .dagLevelDistance(300)
     .zoom(1, 1000)
     .graphData(graphData)
 }
