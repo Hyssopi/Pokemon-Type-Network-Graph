@@ -19,7 +19,9 @@ helpAboutHtml += `
     </tr>
     <tr>
       <td style="padding: 0px 10px 0px 0px; font-weight: bold;">Reference link:</td>
-      <td><a target="_blank" href="https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_National_Pok%C3%A9dex_number" style="color: #0000EE;">Bulbapedia</a></td>
+      <td>
+        <a target="_blank" href="https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_National_Pok%C3%A9dex_number" style="color: #0000EE;">Bul</a><a target="_blank" href="https://bulbapedia.bulbagarden.net/wiki/List_of_Pokémon_with_form_differences" style="color: #0000EE;">bap</a><a target="_blank" href="https://bulbapedia.bulbagarden.net/wiki/Type" style="color: #0000EE;">ed</a><a target="_blank" href="https://bulbapedia.bulbagarden.net/wiki/Mega_Evolution" style="color: #0000EE;">ia</a>
+      </td>
     </tr>
   </table>
   <table>
@@ -114,6 +116,7 @@ function translateNodeData(typeData, pokemonData)
     nodes.push({
       "id": typeData[i].id,
       "name": undefined,
+      "label": undefined,
       "image": image,
       "color": typeData[i].color,
       "group": "TYPE"
@@ -123,7 +126,7 @@ function translateNodeData(typeData, pokemonData)
   for (let i = 0; i < pokemonData.length; i++)
   {
     let typeColors = [];
-    pokemonData[i].typeIds.forEach(function(typeId)
+    pokemonData[i].types.forEach(function(typeId)
     {
       typeColors.push(findColorFromTypeId(typeData, typeId));
     });
@@ -133,6 +136,7 @@ function translateNodeData(typeData, pokemonData)
     nodes.push({
       "id": pokemonData[i].id,
       "name": pokemonData[i].name,
+      "label": pokemonData[i].description,
       "image": image,
       "color": utilities.calculateAverageColor(typeColors),
       "group": "POKEMON"
@@ -153,7 +157,7 @@ function translateEdgeData(pokemonData)
   // Create an edge for each Pokemon and for each of their type(s)
   pokemonData.forEach(function(pokemonDataEntry)
   {
-    pokemonDataEntry.typeIds.forEach(function(typeId)
+    pokemonDataEntry.types.forEach(function(typeId)
     {
       edges.push({
         source: pokemonDataEntry.id,
@@ -191,7 +195,7 @@ function drawGraph(graphHtmlContainerId, graphData)
     .nodeId('id')
     .nodeLabel(node =>
     {
-      return node.name;
+      return node.label;
     })
     .nodeRelSize(5)
     .onNodeClick(node =>
