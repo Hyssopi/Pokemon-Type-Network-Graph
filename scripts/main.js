@@ -11,7 +11,7 @@ const NODE_IMAGE_DIRECTORY_PATH = './images/nodes/';
 let helpAboutHtml = '';
 helpAboutHtml += `
 <div style="margin: 10px 0px 10px 10px; line-height: 2; font-size: 16px; font-family: Arial, Liberation Sans, sans-serif;">
-  <div style="padding: 0px 0px 10px 0px;">Pokemon and their relations to Pokemon types visualized<br>in a network graph.</div>
+  <div style="padding: 0px 0px 10px 0px;">Interactive network graph visualizing Pokemons and their<br>associated Types.</div>
   <table style="padding: 0px 0px 10px 0px;">
     <tr>
       <td style="padding: 0px 10px 0px 0px; font-weight: bold;">GitHub Pages:</td>

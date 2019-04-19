@@ -1,5 +1,5 @@
 # Pokemon Type Network Graph
-Pokemon and their relations to Pokemon types visualized in a network graph.
+Interactive network graph visualizing Pokemons and their associated Types.
 
 ![splash](images/splash.png)
 
