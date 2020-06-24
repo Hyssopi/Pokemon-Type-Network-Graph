@@ -2,7 +2,6 @@
 import ForceGraph from 'force-graph';
 import * as utilities from '../util/utilities.js';
 
-
 const GRAPH_HTML_CONTAINER_ID = 'graphContainer';
 const NETWORK_GRAPH_DATA_JSON_PATH = 'data/pokemonTypeData.json';
 const NODE_IMAGE_DIRECTORY_PATH = './images/nodes/';
@@ -171,6 +170,10 @@ function translateEdgeData(pokemonData)
 // How much to scale the node image to be displayed
 const GROUP_TYPE_IMAGE_SCALE_AMOUNT = 0.15;
 const GROUP_POKEMON_IMAGE_SCALE_AMOUNT = 0.3;
+// How much opacity unselected nodes/edges are, from 1.0 (full) to 0.0 (transparent)
+const UNSELECTED_OPACITY = 0.3;
+// How much selected node image size should increase by
+const SELECTED_NODE_IMAGE_SIZE_MULTIPLIER = 1.1;
 
 // Reference of the ForceGraph
 let graph;
@@ -238,28 +241,29 @@ function drawGraph(graphHtmlContainerId, graphData)
       // Crisp edges when zooming in images
       ctx.imageSmoothingEnabled = false;
       
-      let scaledWidth = 1;
-      let scaledHeight = 1;
+      let scaledWidth = node.image.naturalWidth;
+      let scaledHeight = node.image.naturalHeight;
       
       if (node.group === 'TYPE')
       {
-        scaledWidth = node.image.naturalWidth * GROUP_TYPE_IMAGE_SCALE_AMOUNT;
-        scaledHeight = node.image.naturalHeight * GROUP_TYPE_IMAGE_SCALE_AMOUNT;
+        scaledWidth *= GROUP_TYPE_IMAGE_SCALE_AMOUNT;
+        scaledHeight *= GROUP_TYPE_IMAGE_SCALE_AMOUNT;
       }
       else if (node.group === 'POKEMON')
       {
-        scaledWidth = node.image.naturalWidth * GROUP_POKEMON_IMAGE_SCALE_AMOUNT;
-        scaledHeight = node.image.naturalHeight * GROUP_POKEMON_IMAGE_SCALE_AMOUNT;
+        scaledWidth *= GROUP_POKEMON_IMAGE_SCALE_AMOUNT;
+        scaledHeight *= GROUP_POKEMON_IMAGE_SCALE_AMOUNT;
       }
       
       // Slightly increase image size for highlighted nodes
       if (highlightNodes.indexOf(node) !== -1)
       {
-        scaledWidth *= 1.1;
-        scaledHeight *= 1.1;
+        scaledWidth *= SELECTED_NODE_IMAGE_SIZE_MULTIPLIER;
+        scaledHeight *= SELECTED_NODE_IMAGE_SIZE_MULTIPLIER;
       }
       
       ctx.save();
+      
       // Set node images to full opacity if it is to be highlighted or if the highlight node list is empty.
       // Otherwise set the node images to be partially transparent. This is to help reduce clutter and increase visibility for the highlighted nodes.
       if ((highlightNodes.indexOf(node) !== -1) || (highlightNodes.length === 0))
@@ -268,7 +272,7 @@ function drawGraph(graphHtmlContainerId, graphData)
       }
       else
       {
-        ctx.globalAlpha = 0.3;
+        ctx.globalAlpha = UNSELECTED_OPACITY;
       }
       
       ctx.drawImage(node.image, node.x - scaledWidth / 2, node.y - scaledHeight / 2, scaledWidth, scaledHeight);
@@ -278,7 +282,7 @@ function drawGraph(graphHtmlContainerId, graphData)
       {
         let label = node.name;
         // Zoom out: globalScale is smaller (<1), Zoom in: globalScale is bigger (>40)
-        let fontSize = 6/globalScale < 3 ? 3 : 6/globalScale;
+        let fontSize = ((6 / globalScale) < 3) ? 3 : (6 / globalScale);
         ctx.font = ((highlightNodes.indexOf(node) !== -1) ? 'bold' : '') + ` ${fontSize}px Arial, Liberation Sans, sans-serif`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -308,6 +312,8 @@ function drawGraph(graphHtmlContainerId, graphData)
       ctx.lineWidth = (highlightLinks.indexOf(link) === -1) ? 1 / globalScale : 4 / globalScale;
       
       ctx.save();
+      ctx.stroke();
+      
       // Set links to be partially transparent if not selected to be highlighted and with a non-empty highlight link list.
       if ((highlightLinks.indexOf(link) !== -1) || (highlightLinks.length === 0))
       {
@@ -315,10 +321,9 @@ function drawGraph(graphHtmlContainerId, graphData)
       }
       else
       {
-        ctx.globalAlpha = 0.3;
+        ctx.globalAlpha = UNSELECTED_OPACITY;
       }
       
-      ctx.stroke();
       ctx.restore();
     })
     .dagLevelDistance(300)
