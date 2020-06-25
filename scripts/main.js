@@ -174,6 +174,10 @@ const GROUP_POKEMON_IMAGE_SCALE_AMOUNT = 0.3;
 const UNSELECTED_OPACITY = 0.3;
 // How much selected node image size should increase by
 const SELECTED_NODE_IMAGE_SIZE_MULTIPLIER = 1.1;
+// Relative size of the selectable node area
+const NODE_RELATIVE_SIZE = 5;
+// Offset of the node label
+const NODE_LABEL_OFFSET_Y = 5;
 
 // Reference of the ForceGraph
 let graph;
@@ -200,7 +204,7 @@ function drawGraph(graphHtmlContainerId, graphData)
     {
       return node.label;
     })
-    .nodeRelSize(5)
+    .nodeRelSize(NODE_RELATIVE_SIZE)
     .onNodeClick(node =>
     {
       // Reset highlight lists if not multiselecting
@@ -287,8 +291,7 @@ function drawGraph(graphHtmlContainerId, graphData)
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillStyle = 'black';
-        const LABEL_OFFSET_Y = 5;
-        ctx.fillText(label, node.x, node.y + LABEL_OFFSET_Y);
+        ctx.fillText(label, node.x, node.y + NODE_LABEL_OFFSET_Y);
       }
     })
     .linkCanvasObject((link, ctx, globalScale) =>
