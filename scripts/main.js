@@ -19,7 +19,7 @@ helpAboutHtml += `
     <tr>
       <td style="padding: 0px 10px 0px 0px; font-weight: bold;">Reference link:</td>
       <td>
-        <a target="_blank" href="https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_National_Pok%C3%A9dex_number" style="color: #0000EE;">Bul</a><a target="_blank" href="https://bulbapedia.bulbagarden.net/wiki/List_of_Pokémon_with_form_differences" style="color: #0000EE;">bap</a><a target="_blank" href="https://bulbapedia.bulbagarden.net/wiki/Type" style="color: #0000EE;">ed</a><a target="_blank" href="https://bulbapedia.bulbagarden.net/wiki/Mega_Evolution" style="color: #0000EE;">ia</a>
+        <a target="_blank" href="https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_National_Pok%C3%A9dex_number" style="color: #0000EE;">Bulbapedia</a>
       </td>
     </tr>
   </table>
