@@ -137,7 +137,7 @@ function translateNodeData(typeData, pokemonData)
       "name": pokemonData[i].name,
       "label": pokemonData[i].description,
       "image": image,
-      "color": utilities.calculateAverageColorRGBHex(typeColors),
+      "color": utilities.calculateAverageColor(typeColors),
       "group": "POKEMON"
     });
   }
@@ -187,8 +187,6 @@ let highlightLinks = [];
 let isMultiselect = false;
 // Directed acyclic graph (DAG) mode to represent the network graph
 let dagMode = null;
-
-const UNSELECTED_OPACITY_HEX = Math.trunc(255 * UNSELECTED_OPACITY).toString(16);
 
 /**
  * Uses force-graph to draw the network graph as a HTML canvas using the graphData input.
@@ -298,7 +296,7 @@ function drawGraph(graphHtmlContainerId, graphData)
         }
         else
         {
-          ctx.fillStyle = '#000000' + UNSELECTED_OPACITY_HEX;
+          ctx.fillStyle = '#000000' + (Math.trunc(255 * UNSELECTED_OPACITY)).toString(16);
         }
         ctx.fillText(label, node.x, node.y + NODE_LABEL_OFFSET_Y);
       }
@@ -313,16 +311,8 @@ function drawGraph(graphHtmlContainerId, graphData)
       
       // Draw link line
       let lineGradient = ctx.createLinearGradient(link.source.x, link.source.y, link.target.x, link.target.y);
-      if ((highlightLinks.indexOf(link) !== -1) || (highlightLinks.length === 0))
-      {
-        lineGradient.addColorStop(0, link.source.color);
-        lineGradient.addColorStop(1, link.target.color);
-      }
-      else
-      {
-        lineGradient.addColorStop(0, link.source.color + UNSELECTED_OPACITY_HEX);
-        lineGradient.addColorStop(1, link.target.color + UNSELECTED_OPACITY_HEX);
-      }
+      lineGradient.addColorStop(0, link.source.color);
+      lineGradient.addColorStop(1, link.target.color);
       
       ctx.beginPath();
       ctx.strokeStyle = lineGradient;
