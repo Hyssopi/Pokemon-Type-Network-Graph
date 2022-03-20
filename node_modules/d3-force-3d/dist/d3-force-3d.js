@@ -1,12 +1,12 @@
-// https://github.com/vasturiano/d3-force-3d v2.1.0 Copyright 2020 Vasco Asturiano
+// https://github.com/vasturiano/d3-force-3d v3.0.3 Copyright 2022 Vasco Asturiano
 (function (global, factory) {
 typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3-binarytree'), require('d3-quadtree'), require('d3-octree'), require('d3-dispatch'), require('d3-timer')) :
 typeof define === 'function' && define.amd ? define(['exports', 'd3-binarytree', 'd3-quadtree', 'd3-octree', 'd3-dispatch', 'd3-timer'], factory) :
-(global = global || self, factory(global.d3 = global.d3 || {}, global.d3, global.d3, global.d3, global.d3, global.d3));
+(global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.d3 = global.d3 || {}, global.d3, global.d3, global.d3, global.d3, global.d3));
 }(this, (function (exports, d3Binarytree, d3Quadtree, d3Octree, d3Dispatch, d3Timer) { 'use strict';
 
 function center(x, y, z) {
-  var nodes;
+  var nodes, strength = 1;
 
   if (x == null) x = 0;
   if (y == null) y = 0;
@@ -24,7 +24,7 @@ function center(x, y, z) {
       node = nodes[i], sx += node.x || 0, sy += node.y || 0, sz += node.z || 0;
     }
 
-    for (sx = sx / n - x, sy = sy / n - y, sz = sz / n - z, i = 0; i < n; ++i) {
+    for (sx = (sx / n - x) * strength, sy = (sy / n - y) * strength, sz = (sz / n - z) * strength, i = 0; i < n; ++i) {
       node = nodes[i];
       if (sx) { node.x -= sx; }
       if (sy) { node.y -= sy; }
@@ -48,6 +48,10 @@ function center(x, y, z) {
     return arguments.length ? (z = +_, force) : z;
   };
 
+  force.strength = function(_) {
+    return arguments.length ? (strength = +_, force) : strength;
+  };
+
   return force;
 }
 
@@ -57,19 +61,19 @@ function constant(x) {
   };
 }
 
-function jiggle() {
-  return (Math.random() - 0.5) * 1e-6;
+function jiggle(random) {
+  return (random() - 0.5) * 1e-6;
 }
 
-function x(d) {
+function x$2(d) {
   return d.x + d.vx;
 }
 
-function y(d) {
+function y$2(d) {
   return d.y + d.vy;
 }
 
-function z(d) {
+function z$2(d) {
   return d.z + d.vz;
 }
 
@@ -77,6 +81,7 @@ function collide(radius) {
   var nodes,
       nDim,
       radii,
+      random,
       strength = 1,
       iterations = 1;
 
@@ -94,9 +99,9 @@ function collide(radius) {
 
     for (var k = 0; k < iterations; ++k) {
       tree =
-          (nDim === 1 ? d3Binarytree.binarytree(nodes, x)
-          :(nDim === 2 ? d3Quadtree.quadtree(nodes, x, y)
-          :(nDim === 3 ? d3Octree.octree(nodes, x, y, z)
+          (nDim === 1 ? d3Binarytree.binarytree(nodes, x$2)
+          :(nDim === 2 ? d3Quadtree.quadtree(nodes, x$2, y$2)
+          :(nDim === 3 ? d3Octree.octree(nodes, x$2, y$2, z$2)
           :null
       ))).visitAfter(prepare);
 
@@ -127,9 +132,9 @@ function collide(radius) {
               z = (nDim > 2 ? zi - data.z - data.vz : 0),
               l = x * x + y * y + z * z;
           if (l < r * r) {
-            if (x === 0) x = jiggle(), l += x * x;
-            if (nDim > 1 && y === 0) y = jiggle(), l += y * y;
-            if (nDim > 2 && z === 0) z = jiggle(), l += z * z;
+            if (x === 0) x = jiggle(random), l += x * x;
+            if (nDim > 1 && y === 0) y = jiggle(random), l += y * y;
+            if (nDim > 2 && z === 0) z = jiggle(random), l += z * z;
             l = (r - (l = Math.sqrt(l))) / l * strength;
 
             node.vx += (x *= l) * (r = (rj *= rj) / (ri2 + rj));
@@ -165,9 +170,10 @@ function collide(radius) {
     for (i = 0; i < n; ++i) node = nodes[i], radii[node.index] = +radius(node, i, nodes);
   }
 
-  force.initialize = function(initNodes, numDimensions) {
-    nodes = initNodes;
-    nDim = numDimensions;
+  force.initialize = function(_nodes, ...args) {
+    nodes = _nodes;
+    random = args.find(arg => typeof arg === 'function') || Math.random;
+    nDim = args.find(arg => [1, 2, 3].includes(arg)) || 2;
     initialize();
   };
 
@@ -206,6 +212,7 @@ function link(links) {
       nDim,
       count,
       bias,
+      random,
       iterations = 1;
 
   if (links == null) links = [];
@@ -218,9 +225,9 @@ function link(links) {
     for (var k = 0, n = links.length; k < iterations; ++k) {
       for (var i = 0, link, source, target, x = 0, y = 0, z = 0, l, b; i < n; ++i) {
         link = links[i], source = link.source, target = link.target;
-        x = target.x + target.vx - source.x - source.vx || jiggle();
-        if (nDim > 1) { y = target.y + target.vy - source.y - source.vy || jiggle(); }
-        if (nDim > 2) { z = target.z + target.vz - source.z - source.vz || jiggle(); }
+        x = target.x + target.vx - source.x - source.vx || jiggle(random);
+        if (nDim > 1) { y = target.y + target.vy - source.y - source.vy || jiggle(random); }
+        if (nDim > 2) { z = target.z + target.vz - source.z - source.vz || jiggle(random); }
         l = Math.sqrt(x * x + y * y + z * z);
         l = (l - distances[i]) / l * alpha * strengths[i];
         x *= l, y *= l, z *= l;
@@ -277,9 +284,10 @@ function link(links) {
     }
   }
 
-  force.initialize = function(initNodes, numDimensions) {
-    nodes = initNodes;
-    nDim = numDimensions;
+  force.initialize = function(_nodes, ...args) {
+    nodes = _nodes;
+    random = args.find(arg => typeof arg === 'function') || Math.random;
+    nDim = args.find(arg => [1, 2, 3].includes(arg)) || 2;
     initialize();
   };
 
@@ -304,6 +312,16 @@ function link(links) {
   };
 
   return force;
+}
+
+// https://en.wikipedia.org/wiki/Linear_congruential_generator#Parameters_in_common_use
+const a = 1664525;
+const c = 1013904223;
+const m = 4294967296; // 2^32
+
+function lcg() {
+  let s = 1;
+  return () => (s = (a * s + c) % m) / m;
 }
 
 var MAX_DIMENSIONS = 3;
@@ -336,7 +354,8 @@ function simulation(nodes, numDimensions) {
       velocityDecay = 0.6,
       forces = new Map(),
       stepper = d3Timer.timer(step),
-      event = d3Dispatch.dispatch("tick", "end");
+      event = d3Dispatch.dispatch("tick", "end"),
+      random = lcg();
 
   if (nodes == null) nodes = [];
 
@@ -386,7 +405,7 @@ function simulation(nodes, numDimensions) {
       if (node.fy != null) node.y = node.fy;
       if (node.fz != null) node.z = node.fz;
       if (isNaN(node.x) || (nDim > 1 && isNaN(node.y)) || (nDim > 2 && isNaN(node.z))) {
-        var radius = initialRadius * (nDim > 2 ? Math.cbrt(i) : (nDim > 1 ? Math.sqrt(i) : i)),
+        var radius = initialRadius * (nDim > 2 ? Math.cbrt(0.5 + i) : (nDim > 1 ? Math.sqrt(0.5 + i) : i)),
           rollAngle = i * initialAngleRoll,
           yawAngle = i * initialAngleYaw;
 
@@ -410,7 +429,7 @@ function simulation(nodes, numDimensions) {
   }
 
   function initializeForce(force) {
-    if (force.initialize) force.initialize(nodes, nDim);
+    if (force.initialize) force.initialize(nodes, random, nDim);
     return force;
   }
 
@@ -457,6 +476,10 @@ function simulation(nodes, numDimensions) {
       return arguments.length ? (velocityDecay = 1 - _, simulation) : 1 - velocityDecay;
     },
 
+    randomSource: function(_) {
+      return arguments.length ? (random = _, forces.forEach(initializeForce), simulation) : random;
+    },
+
     force: function(name, _) {
       return arguments.length > 1 ? ((_ == null ? forces.delete(name) : forces.set(name, initializeForce(_))), simulation) : forces.get(name);
     },
@@ -501,6 +524,7 @@ function manyBody() {
   var nodes,
       nDim,
       node,
+      random,
       alpha,
       strength = constant(-30),
       strengths,
@@ -573,9 +597,9 @@ function manyBody() {
     // Limit forces for very close nodes; randomize direction if coincident.
     if (w * w / theta2 < l) {
       if (l < distanceMax2) {
-        if (x === 0) x = jiggle(), l += x * x;
-        if (nDim > 1 && y === 0) y = jiggle(), l += y * y;
-        if (nDim > 2 && z === 0) z = jiggle(), l += z * z;
+        if (x === 0) x = jiggle(random), l += x * x;
+        if (nDim > 1 && y === 0) y = jiggle(random), l += y * y;
+        if (nDim > 2 && z === 0) z = jiggle(random), l += z * z;
         if (l < distanceMin2) l = Math.sqrt(distanceMin2 * l);
         node.vx += x * treeNode.value * alpha / l;
         if (nDim > 1) { node.vy += y * treeNode.value * alpha / l; }
@@ -589,9 +613,9 @@ function manyBody() {
 
     // Limit forces for very close nodes; randomize direction if coincident.
     if (treeNode.data !== node || treeNode.next) {
-      if (x === 0) x = jiggle(), l += x * x;
-      if (nDim > 1 && y === 0) y = jiggle(), l += y * y;
-      if (nDim > 2 && z === 0) z = jiggle(), l += z * z;
+      if (x === 0) x = jiggle(random), l += x * x;
+      if (nDim > 1 && y === 0) y = jiggle(random), l += y * y;
+      if (nDim > 2 && z === 0) z = jiggle(random), l += z * z;
       if (l < distanceMin2) l = Math.sqrt(distanceMin2 * l);
     }
 
@@ -603,9 +627,10 @@ function manyBody() {
     } while (treeNode = treeNode.next);
   }
 
-  force.initialize = function(initNodes, numDimensions) {
-    nodes = initNodes;
-    nDim = numDimensions;
+  force.initialize = function(_nodes, ...args) {
+    nodes = _nodes;
+    random = args.find(arg => typeof arg === 'function') || Math.random;
+    nDim = args.find(arg => [1, 2, 3].includes(arg)) || 2;
     initialize();
   };
 
@@ -665,9 +690,9 @@ function radial(radius, x, y, z) {
     }
   }
 
-  force.initialize = function(initNodes, numDimensions) {
+  force.initialize = function(initNodes, ...args) {
     nodes = initNodes;
-    nDim = numDimensions;
+    nDim = args.find(arg => [1, 2, 3].includes(arg)) || 2;
     initialize();
   };
 
@@ -694,7 +719,7 @@ function radial(radius, x, y, z) {
   return force;
 }
 
-function x$2(x) {
+function x(x) {
   var strength = constant(0.1),
       nodes,
       strengths,
@@ -734,7 +759,7 @@ function x$2(x) {
   return force;
 }
 
-function y$2(y) {
+function y(y) {
   var strength = constant(0.1),
       nodes,
       strengths,
@@ -774,7 +799,7 @@ function y$2(y) {
   return force;
 }
 
-function z$2(z) {
+function z(z) {
   var strength = constant(0.1),
       nodes,
       strengths,
@@ -820,9 +845,9 @@ exports.forceLink = link;
 exports.forceManyBody = manyBody;
 exports.forceRadial = radial;
 exports.forceSimulation = simulation;
-exports.forceX = x$2;
-exports.forceY = y$2;
-exports.forceZ = z$2;
+exports.forceX = x;
+exports.forceY = y;
+exports.forceZ = z;
 
 Object.defineProperty(exports, '__esModule', { value: true });
 

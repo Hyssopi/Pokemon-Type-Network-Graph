@@ -9,5 +9,7 @@ module.exports =
   output:
   {
     filename: 'main-bundle.js'
-  }
+  },
+  devtool: false,
+  mode: 'production',
 };

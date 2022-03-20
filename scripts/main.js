@@ -171,7 +171,7 @@ function translateEdgeData(pokemonData)
 const GROUP_TYPE_IMAGE_SCALE_AMOUNT = 0.15;
 const GROUP_POKEMON_IMAGE_SCALE_AMOUNT = 0.3;
 // How much opacity unselected nodes/edges are, from 1.0 (full) to 0.0 (transparent)
-const UNSELECTED_OPACITY = 0.3;
+const UNSELECTED_OPACITY = 0.15;
 // How much selected node image size should increase by
 const SELECTED_NODE_IMAGE_SIZE_MULTIPLIER = 1.1;
 // Relative size of the selectable node area
@@ -311,8 +311,16 @@ function drawGraph(graphHtmlContainerId, graphData)
       
       // Draw link line
       let lineGradient = ctx.createLinearGradient(link.source.x, link.source.y, link.target.x, link.target.y);
-      lineGradient.addColorStop(0, link.source.color);
-      lineGradient.addColorStop(1, link.target.color);
+      if ((highlightLinks.indexOf(link) !== -1) || (highlightLinks.length === 0))
+      {
+        lineGradient.addColorStop(0, link.source.color);
+        lineGradient.addColorStop(1, link.target.color);
+      }
+      else
+      {
+        lineGradient.addColorStop(0, link.source.color + (Math.trunc(255 * UNSELECTED_OPACITY)).toString(16));
+        lineGradient.addColorStop(1, link.target.color + (Math.trunc(255 * UNSELECTED_OPACITY)).toString(16));
+      }
       
       ctx.beginPath();
       ctx.strokeStyle = lineGradient;
