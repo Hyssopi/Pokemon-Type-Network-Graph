@@ -188,6 +188,8 @@ let isMultiselect = false;
 // Directed acyclic graph (DAG) mode to represent the network graph
 let dagMode = null;
 
+const UNSELECTED_OPACITY_HEX = Math.trunc(255 * UNSELECTED_OPACITY).toString(16);
+
 /**
  * Uses force-graph to draw the network graph as a HTML canvas using the graphData input.
  *
@@ -296,7 +298,7 @@ function drawGraph(graphHtmlContainerId, graphData)
         }
         else
         {
-          ctx.fillStyle = '#000000' + (Math.trunc(255 * UNSELECTED_OPACITY)).toString(16);
+          ctx.fillStyle = '#000000' + UNSELECTED_OPACITY_HEX;
         }
         ctx.fillText(label, node.x, node.y + NODE_LABEL_OFFSET_Y);
       }
@@ -318,8 +320,8 @@ function drawGraph(graphHtmlContainerId, graphData)
       }
       else
       {
-        lineGradient.addColorStop(0, link.source.color + Math.trunc(255 * UNSELECTED_OPACITY).toString(16));
-        lineGradient.addColorStop(1, link.target.color + Math.trunc(255 * UNSELECTED_OPACITY).toString(16));
+        lineGradient.addColorStop(0, link.source.color + UNSELECTED_OPACITY_HEX);
+        lineGradient.addColorStop(1, link.target.color + UNSELECTED_OPACITY_HEX);
       }
       
       ctx.beginPath();
