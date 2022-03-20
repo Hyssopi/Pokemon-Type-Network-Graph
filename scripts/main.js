@@ -290,7 +290,14 @@ function drawGraph(graphHtmlContainerId, graphData)
         ctx.font = ((highlightNodes.indexOf(node) !== -1) ? 'bold' : '') + ` ${fontSize}px Arial, Liberation Sans, sans-serif`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillStyle = 'black';
+        if ((highlightNodes.indexOf(node) !== -1) || (highlightNodes.length === 0))
+        {
+          ctx.fillStyle = 'black';
+        }
+        else
+        {
+          ctx.fillStyle = '#000000' + (Math.trunc(255 * UNSELECTED_OPACITY)).toString(16);
+        }
         ctx.fillText(label, node.x, node.y + NODE_LABEL_OFFSET_Y);
       }
     })
@@ -304,8 +311,16 @@ function drawGraph(graphHtmlContainerId, graphData)
       
       // Draw link line
       let lineGradient = ctx.createLinearGradient(link.source.x, link.source.y, link.target.x, link.target.y);
-      lineGradient.addColorStop(0, link.source.color);
-      lineGradient.addColorStop(1, link.target.color);
+      if ((highlightLinks.indexOf(link) !== -1) || (highlightLinks.length === 0))
+      {
+        lineGradient.addColorStop(0, link.source.color);
+        lineGradient.addColorStop(1, link.target.color);
+      }
+      else
+      {
+        lineGradient.addColorStop(0, link.source.color + (Math.trunc(255 * UNSELECTED_OPACITY)).toString(16));
+        lineGradient.addColorStop(1, link.target.color + (Math.trunc(255 * UNSELECTED_OPACITY)).toString(16));
+      }
       
       ctx.beginPath();
       ctx.strokeStyle = lineGradient;
