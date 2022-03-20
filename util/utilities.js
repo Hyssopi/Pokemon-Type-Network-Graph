@@ -221,3 +221,28 @@ export function calculateAverageColor(colors)
   colorAlphaSum /= colors.length;
   return 'rgba(' + colorRedSum + ', ' + colorGreenSum + ', ' + colorBlueSum + ', ' + colorAlphaSum + ')';
 }
+
+/**
+ * Calculate average color of a list of colors.
+ *
+ * @param colors List of colors in hex, RGB, or RGBA color string format
+ * @return Averaged color in RGB color hex string format
+ */
+export function calculateAverageColorRGBHex(colors)
+{
+  let colorRedSum = 0;
+  let colorGreenSum = 0;
+  let colorBlueSum = 0;
+  colors.forEach(function(colorString)
+  {
+    let colorObject = getRgbaValues(colorString);
+    colorRedSum += colorObject.r;
+    colorGreenSum += colorObject.g;
+    colorBlueSum += colorObject.b;
+  });
+  colorRedSum /= colors.length;
+  colorGreenSum /= colors.length;
+  colorBlueSum /= colors.length;
+
+  return '#' + Math.trunc(colorRedSum).toString(16) + '' + Math.trunc(colorGreenSum).toString(16) + '' + Math.trunc(colorBlueSum).toString(16);
+}

@@ -137,7 +137,7 @@ function translateNodeData(typeData, pokemonData)
       "name": pokemonData[i].name,
       "label": pokemonData[i].description,
       "image": image,
-      "color": utilities.calculateAverageColor(typeColors),
+      "color": utilities.calculateAverageColorRGBHex(typeColors),
       "group": "POKEMON"
     });
   }
@@ -318,8 +318,8 @@ function drawGraph(graphHtmlContainerId, graphData)
       }
       else
       {
-        lineGradient.addColorStop(0, link.source.color + (Math.trunc(255 * UNSELECTED_OPACITY)).toString(16));
-        lineGradient.addColorStop(1, link.target.color + (Math.trunc(255 * UNSELECTED_OPACITY)).toString(16));
+        lineGradient.addColorStop(0, link.source.color + Math.trunc(255 * UNSELECTED_OPACITY).toString(16));
+        lineGradient.addColorStop(1, link.target.color + Math.trunc(255 * UNSELECTED_OPACITY).toString(16));
       }
       
       ctx.beginPath();
