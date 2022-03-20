@@ -179,6 +179,8 @@ const NODE_RELATIVE_SIZE = 5;
 // Offset of the node label
 const NODE_LABEL_OFFSET_Y = 5;
 
+const UNSELECTED_OPACITY_HEX = Math.trunc(255 * UNSELECTED_OPACITY).toString(16);
+
 // Reference of the ForceGraph
 let graph;
 // List of nodes and links to highlight
@@ -296,7 +298,7 @@ function drawGraph(graphHtmlContainerId, graphData)
         }
         else
         {
-          ctx.fillStyle = '#000000' + (Math.trunc(255 * UNSELECTED_OPACITY)).toString(16);
+          ctx.fillStyle = '#000000' + UNSELECTED_OPACITY_HEX;
         }
         ctx.fillText(label, node.x, node.y + NODE_LABEL_OFFSET_Y);
       }

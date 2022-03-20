@@ -10,10 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "force-graph": "^1.42.8",
-    "webpack": "^5.70.0"
+    "force-graph": "1.30.2",
+    "webpack": "5.70.0"
   },
   "devDependencies": {
-    "webpack-cli": "^4.9.2"
+    "webpack-cli": "4.9.2"
   }
 }
