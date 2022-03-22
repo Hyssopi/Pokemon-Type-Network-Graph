@@ -3,7 +3,13 @@ Interactive network graph visualizing Pokemons and their associated Types.
 
 ![splash](images/splash.png)
 
-References:
+## Working Demo
+https://www.youtube.com/watch?v=m_pvA6SjGG4
+
+## Try It Out
+https://hyssopi.github.io/Pokemon-Type-Network-Graph/
+
+## References
 - https://bulbapedia.bulbagarden.net/wiki/Type
 - https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_National_Pok%C3%A9dex_number
 - https://bulbapedia.bulbagarden.net/wiki/Regional_form
@@ -15,9 +21,6 @@ References:
 - https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_with_gender_differences
 - https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_with_form_differences
 - https://archives.bulbagarden.net/wiki/Category:Generation_VIII_menu_sprites
-
-## GitHub Pages
-https://hyssopi.github.io/Pokemon-Type-Network-Graph/
 
 ## Prerequisites
 - (To build) `npm` installed.
