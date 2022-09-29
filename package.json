@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "force-graph": "1.30.2",
+    "force-graph": "1.42.13",
     "webpack": "5.70.0"
   },
   "devDependencies": {
